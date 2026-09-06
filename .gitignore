@@ -1,0 +1,14 @@
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+
+.vs/
+*.vsidx
+*.v2
+
+.idea/
+.vscode/
+
+.DS_Store
+Thumbs.db
