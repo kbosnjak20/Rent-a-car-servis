@@ -14,6 +14,7 @@ namespace AutoRent.Forms
         private Button _btnRefresh;
         private Button _btnAdd;
         private Button _btnEdit;
+        private Button _btnDelete;
 
         public VehiclesForm()
         {
@@ -54,6 +55,9 @@ namespace AutoRent.Forms
             _btnEdit = new Button { Text = "Uredi", Left = 770, Top = 11, Width = 100 };
             _btnEdit.Click += BtnEdit_Click;
 
+            _btnDelete = new Button { Text = "Obriši vozilo", Left = 550, Top = 11, Width = 100 };
+            _btnDelete.Click += BtnDelete_Click;
+
             _grid = new DataGridView
             {
                 Left = 12,
@@ -72,6 +76,7 @@ namespace AutoRent.Forms
             Controls.Add(_btnRefresh);
             Controls.Add(_btnAdd);
             Controls.Add(_btnEdit);
+            Controls.Add(_btnDelete);
             Controls.Add(_grid);
         }
 
@@ -104,6 +109,36 @@ namespace AutoRent.Forms
                     _vehicleRepository.Update(dialog.Vehicle);
                     LoadVehicles();
                 }
+            }
+        }
+
+        private void BtnDelete_Click(object sender, EventArgs e)
+        {
+            var selected = _grid.CurrentRow?.DataBoundItem as Vehicle;
+            if (selected == null)
+            {
+                MessageBox.Show("Odaberite vozilo koje želite obrisati.", "Nije odabrano vozilo",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            var confirm = MessageBox.Show(
+                $"Jeste li sigurni da želite obrisati vozilo \"{selected}\"?\n" +
+                "Napomena: vozilo se ne može obrisati ako ima povezane rezervacije ili servise.",
+                "Potvrda brisanja", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+            if (confirm != DialogResult.Yes) return;
+
+            try
+            {
+                _vehicleRepository.Delete(selected.Id);
+                LoadVehicles();
+            }
+            catch (System.Data.SqlClient.SqlException)
+            {
+                MessageBox.Show(
+                    "Vozilo nije moguće obrisati jer postoje povezane rezervacije ili servisi.",
+                    "Brisanje nije uspjelo", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
