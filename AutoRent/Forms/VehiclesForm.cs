@@ -12,6 +12,8 @@ namespace AutoRent.Forms
         private DataGridView _grid;
         private ComboBox _cmbCategory;
         private Button _btnRefresh;
+        private Button _btnAdd;
+        private Button _btnEdit;
 
         public VehiclesForm()
         {
@@ -46,6 +48,12 @@ namespace AutoRent.Forms
             _btnRefresh = new Button { Text = "Osvježi", Left = 300, Top = 11, Width = 90 };
             _btnRefresh.Click += (s, e) => LoadVehicles();
 
+            _btnAdd = new Button { Text = "Novo vozilo", Left = 660, Top = 11, Width = 100 };
+            _btnAdd.Click += BtnAdd_Click;
+
+            _btnEdit = new Button { Text = "Uredi", Left = 770, Top = 11, Width = 100 };
+            _btnEdit.Click += BtnEdit_Click;
+
             _grid = new DataGridView
             {
                 Left = 12,
@@ -62,7 +70,41 @@ namespace AutoRent.Forms
             Controls.Add(lblCategory);
             Controls.Add(_cmbCategory);
             Controls.Add(_btnRefresh);
+            Controls.Add(_btnAdd);
+            Controls.Add(_btnEdit);
             Controls.Add(_grid);
+        }
+
+        private void BtnAdd_Click(object sender, EventArgs e)
+        {
+            using (var dialog = new VehicleEditForm())
+            {
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    _vehicleRepository.Insert(dialog.Vehicle);
+                    LoadVehicles();
+                }
+            }
+        }
+
+        private void BtnEdit_Click(object sender, EventArgs e)
+        {
+            var selected = _grid.CurrentRow?.DataBoundItem as Vehicle;
+            if (selected == null)
+            {
+                MessageBox.Show("Odaberite vozilo koje želite urediti.", "Nije odabrano vozilo",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            using (var dialog = new VehicleEditForm(selected))
+            {
+                if (dialog.ShowDialog(this) == DialogResult.OK)
+                {
+                    _vehicleRepository.Update(dialog.Vehicle);
+                    LoadVehicles();
+                }
+            }
         }
 
         private void LoadVehicles()
