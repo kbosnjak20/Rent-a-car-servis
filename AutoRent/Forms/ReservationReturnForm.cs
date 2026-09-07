@@ -13,6 +13,7 @@ namespace AutoRent.Forms
         private readonly PricingService _pricingService = new PricingService();
 
         private readonly NumericUpDown _numMileage = new NumericUpDown();
+        private readonly CheckBox _chkNoDamage = new CheckBox();
         private readonly TextBox _txtDamage = new TextBox();
         private readonly Label _lblPrice = new Label();
 
@@ -31,7 +32,7 @@ namespace AutoRent.Forms
         {
             Text = $"Evidencija povrata - rezervacija #{_reservation.Id}";
             Width = 400;
-            Height = 300;
+            Height = 330;
             FormBorderStyle = FormBorderStyle.FixedDialog;
             StartPosition = FormStartPosition.CenterParent;
             MaximizeBox = false;
@@ -43,31 +44,45 @@ namespace AutoRent.Forms
             _numMileage.Width = 200;
 
             _txtDamage.Multiline = true;
-            _txtDamage.Height = 60;
+            _txtDamage.Height = 50;
             _txtDamage.Width = 340;
+
+            _chkNoDamage.Text = "Vozilo vraćeno u stanju u kakvom je preuzeto (bez oštećenja)";
+            _chkNoDamage.Checked = true;
+            _chkNoDamage.AutoSize = true;
+            _chkNoDamage.CheckedChanged += (s, e) =>
+            {
+                _txtDamage.Enabled = !_chkNoDamage.Checked;
+                if (_chkNoDamage.Checked) _txtDamage.Clear();
+            };
 
             var lblMileage = new Label { Text = "Stanje km pri povratu:", Left = 15, Top = 18, Width = 170 };
             _numMileage.Left = 190;
             _numMileage.Top = 15;
 
-            var lblDamage = new Label { Text = "Opis oštećenja (ako postoji):", Left = 15, Top = 55, Width = 250 };
-            _txtDamage.Left = 15;
-            _txtDamage.Top = 78;
+            _chkNoDamage.Left = 15;
+            _chkNoDamage.Top = 55;
 
-            var btnCalculate = new Button { Text = "Izračunaj cijenu najma", Left = 15, Top = 150, Width = 200 };
+            var lblDamage = new Label { Text = "Opis oštećenja (ako postoji):", Left = 15, Top = 82, Width = 250 };
+            _txtDamage.Left = 15;
+            _txtDamage.Top = 103;
+            _txtDamage.Enabled = false;
+
+            var btnCalculate = new Button { Text = "Izračunaj cijenu najma", Left = 15, Top = 165, Width = 200 };
             btnCalculate.Click += (s, e) => CalculatePrice();
 
             _lblPrice.Left = 15;
-            _lblPrice.Top = 185;
+            _lblPrice.Top = 200;
             _lblPrice.Width = 340;
             _lblPrice.Font = new System.Drawing.Font(Font, System.Drawing.FontStyle.Bold);
 
-            var btnOk = new Button { Text = "Potvrdi povrat", Left = 90, Top = 220, Width = 110, DialogResult = DialogResult.OK };
-            var btnCancel = new Button { Text = "Odustani", Left = 210, Top = 220, Width = 100, DialogResult = DialogResult.Cancel };
+            var btnOk = new Button { Text = "Potvrdi povrat", Left = 90, Top = 240, Width = 110, DialogResult = DialogResult.OK };
+            var btnCancel = new Button { Text = "Odustani", Left = 210, Top = 240, Width = 100, DialogResult = DialogResult.Cancel };
             btnOk.Click += BtnOk_Click;
 
             Controls.Add(lblMileage);
             Controls.Add(_numMileage);
+            Controls.Add(_chkNoDamage);
             Controls.Add(lblDamage);
             Controls.Add(_txtDamage);
             Controls.Add(btnCalculate);
@@ -95,7 +110,7 @@ namespace AutoRent.Forms
             }
 
             MileageAtReturn = (int)_numMileage.Value;
-            DamageDescription = _txtDamage.Text.Trim();
+            DamageDescription = _chkNoDamage.Checked ? null : _txtDamage.Text.Trim();
         }
     }
 }
