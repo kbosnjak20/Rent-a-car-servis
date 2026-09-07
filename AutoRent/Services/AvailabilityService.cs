@@ -28,6 +28,11 @@ namespace AutoRent.Services
             return true;
         }
 
+        public bool HasActiveReservationInPeriod(int vehicleId, DateTime from, DateTime to)
+        {
+            return HasReservationOverlap(vehicleId, from, to, excludeReservationId: null);
+        }
+
         private bool HasReservationOverlap(int vehicleId, DateTime from, DateTime to, int? excludeReservationId)
         {
             var sql = @"

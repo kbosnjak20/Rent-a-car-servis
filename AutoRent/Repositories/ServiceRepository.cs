@@ -7,6 +7,14 @@ namespace AutoRent.Repositories
 {
     public class ServiceRepository
     {
+        public List<ServiceRecord> GetAll()
+        {
+            var table = Data.Db.ExecuteQuery("SELECT * FROM Servis ORDER BY DatumOd DESC");
+            var result = new List<ServiceRecord>();
+            foreach (DataRow row in table.Rows) result.Add(Map(row));
+            return result;
+        }
+
         public List<ServiceRecord> GetByVehicle(int vehicleId)
         {
             var table = Data.Db.ExecuteQuery(
