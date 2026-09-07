@@ -34,7 +34,7 @@ namespace AutoRent.Forms
         {
             Text = "Rezervacije vozila";
             Width = 1000;
-            Height = 600;
+            Height = 680;
             StartPosition = FormStartPosition.CenterScreen;
 
             var lblVehicle = new Label { Text = "Vozilo:", Left = 12, Top = 15, Width = 50 };
@@ -55,13 +55,25 @@ namespace AutoRent.Forms
             _btnNew = new Button { Text = "Nova rezervacija", Left = 860, Top = 11, Width = 120 };
             _btnNew.Click += BtnNew_Click;
 
-            _btnReschedule = new Button { Text = "Uredi termin", Left = 12, Top = 555, Width = 120 };
+            _btnReschedule = new Button
+            {
+                Text = "Uredi termin", Left = 12, Top = 585, Width = 130, Height = 32,
+                Anchor = AnchorStyles.Bottom | AnchorStyles.Left
+            };
             _btnReschedule.Click += BtnReschedule_Click;
 
-            _btnReturn = new Button { Text = "Evidentiraj povrat", Left = 140, Top = 555, Width = 130 };
+            _btnReturn = new Button
+            {
+                Text = "Evidentiraj povrat", Left = 150, Top = 585, Width = 140, Height = 32,
+                Anchor = AnchorStyles.Bottom | AnchorStyles.Left
+            };
             _btnReturn.Click += BtnReturn_Click;
 
-            _btnCancelOrDelete = new Button { Text = "Otkaži/Obriši", Left = 280, Top = 555, Width = 120 };
+            _btnCancelOrDelete = new Button
+            {
+                Text = "Otkaži/Obriši", Left = 300, Top = 585, Width = 130, Height = 32,
+                Anchor = AnchorStyles.Bottom | AnchorStyles.Left
+            };
             _btnCancelOrDelete.Click += BtnCancelOrDelete_Click;
 
             _grid = new DataGridView
@@ -69,7 +81,7 @@ namespace AutoRent.Forms
                 Left = 12,
                 Top = 50,
                 Width = 960,
-                Height = 480,
+                Height = 520,
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom,
                 ReadOnly = true,
                 AllowUserToAddRows = false,
