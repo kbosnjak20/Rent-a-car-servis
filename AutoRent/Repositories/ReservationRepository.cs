@@ -64,6 +64,29 @@ namespace AutoRent.Repositories
             return table.Rows.Count == 0 ? null : Map(table.Rows[0]);
         }
 
+        public int Insert(Reservation reservation)
+        {
+            const string sql = @"
+                INSERT INTO Rezervacija
+                    (ID_Vozilo, ID_Klijent, ID_Zaposlenik, DatumPocetka, DatumZavrsetka,
+                     TipNajma, Status, StanjeKmPreuzimanje)
+                VALUES
+                    (@ID_Vozilo, @ID_Klijent, @ID_Zaposlenik, @DatumPocetka, @DatumZavrsetka,
+                     @TipNajma, @Status, @StanjeKmPreuzimanje)";
+
+            return Data.Db.ExecuteInsertReturnId(sql, new Dictionary<string, object>
+            {
+                ["@ID_Vozilo"] = reservation.VehicleId,
+                ["@ID_Klijent"] = reservation.ClientId,
+                ["@ID_Zaposlenik"] = reservation.EmployeeId,
+                ["@DatumPocetka"] = reservation.StartDate,
+                ["@DatumZavrsetka"] = reservation.EndDate,
+                ["@TipNajma"] = reservation.RentalType.ToString(),
+                ["@Status"] = ReservationStatus.Aktivna.ToString(),
+                ["@StanjeKmPreuzimanje"] = reservation.MileageAtPickup
+            });
+        }
+
         private static Reservation Map(DataRow row)
         {
             return new Reservation
