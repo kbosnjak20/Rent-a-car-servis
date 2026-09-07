@@ -39,12 +39,17 @@ namespace AutoRent.Repositories
 
         private static Client Map(DataRow row)
         {
+            var contact = row["Kontakt"] == DBNull.Value ? null : row["Kontakt"].ToString();
+
+            var isVoditelj = Session.CurrentEmployee != null
+                && Session.CurrentEmployee.Role == EmployeeRole.VoditeljServisa;
+
             return new Client
             {
                 Id = Convert.ToInt32(row["ID_Klijent"]),
                 FirstName = row["Ime"].ToString(),
                 LastName = row["Prezime"].ToString(),
-                Contact = row["Kontakt"] == DBNull.Value ? null : row["Kontakt"].ToString()
+                Contact = isVoditelj ? contact : Services.PrivacyHelper.MaskContact(contact)
             };
         }
     }
