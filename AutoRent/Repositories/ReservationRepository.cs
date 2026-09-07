@@ -87,6 +87,44 @@ namespace AutoRent.Repositories
             });
         }
 
+        public void UpdateSchedule(int id, DateTime newStart, DateTime newEnd, RentalType newRentalType)
+        {
+            const string sql = @"
+                UPDATE Rezervacija SET
+                    DatumPocetka = @DatumPocetka,
+                    DatumZavrsetka = @DatumZavrsetka,
+                    TipNajma = @TipNajma
+                WHERE ID_Rezervacija = @Id";
+
+            Data.Db.ExecuteNonQuery(sql, new Dictionary<string, object>
+            {
+                ["@DatumPocetka"] = newStart,
+                ["@DatumZavrsetka"] = newEnd,
+                ["@TipNajma"] = newRentalType.ToString(),
+                ["@Id"] = id
+            });
+        }
+
+        public void RecordReturn(int id, int mileageAtReturn, string damageDescription, decimal price)
+        {
+            const string sql = @"
+                UPDATE Rezervacija SET
+                    StanjeKmPovrat = @StanjeKmPovrat,
+                    OpisOstecenja = @OpisOstecenja,
+                    IznosNajma = @IznosNajma,
+                    Status = @Status
+                WHERE ID_Rezervacija = @Id";
+
+            Data.Db.ExecuteNonQuery(sql, new Dictionary<string, object>
+            {
+                ["@StanjeKmPovrat"] = mileageAtReturn,
+                ["@OpisOstecenja"] = string.IsNullOrWhiteSpace(damageDescription) ? (object)DBNull.Value : damageDescription,
+                ["@IznosNajma"] = price,
+                ["@Status"] = ReservationStatus.Zavrsena.ToString(),
+                ["@Id"] = id
+            });
+        }
+
         private static Reservation Map(DataRow row)
         {
             return new Reservation
