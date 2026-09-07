@@ -28,6 +28,9 @@ namespace AutoRent.Forms
             var btnServices = AddMenuButton("Servisi vozila", ref top);
             btnServices.Click += (s, e) => new ServicesForm().ShowDialog(this);
 
+            var btnClients = AddMenuButton("Klijenti", ref top);
+            btnClients.Click += (s, e) => new ClientsForm().ShowDialog(this);
+
             var btnStatistics = AddMenuButton("Statistika korištenja vozila", ref top);
             btnStatistics.Click += (s, e) => new StatisticsForm().ShowDialog(this);
 
@@ -52,6 +55,8 @@ namespace AutoRent.Forms
         private Button AddMenuButton(string text, ref int top)
         {
             var button = new Button { Text = text, Left = 20, Top = top, Width = 340, Height = 40 };
+            button.BackColor = Theme.Primary;
+            button.ForeColor = Theme.PrimaryText;
             Controls.Add(button);
             top += 50;
             return button;
