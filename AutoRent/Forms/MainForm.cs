@@ -25,6 +25,9 @@ namespace AutoRent.Forms
             var btnReservations = AddMenuButton("Rezervacije vozila", ref top);
             btnReservations.Click += (s, e) => new ReservationsForm().ShowDialog(this);
 
+            var btnStatistics = AddMenuButton("Statistika korištenja vozila", ref top);
+            btnStatistics.Click += (s, e) => new StatisticsForm().ShowDialog(this);
+
             var btnLogout = new Button { Text = "Odjava", Left = 20, Top = 280, Width = 340, Height = 35 };
             btnLogout.Click += (s, e) =>
             {
