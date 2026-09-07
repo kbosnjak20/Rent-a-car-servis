@@ -21,6 +21,7 @@ namespace AutoRent.Forms
         private Button _btnNew;
         private Button _btnReschedule;
         private Button _btnReturn;
+        private Button _btnCancelOrDelete;
 
         public ReservationsForm()
         {
@@ -60,6 +61,9 @@ namespace AutoRent.Forms
             _btnReturn = new Button { Text = "Evidentiraj povrat", Left = 140, Top = 555, Width = 130 };
             _btnReturn.Click += BtnReturn_Click;
 
+            _btnCancelOrDelete = new Button { Text = "Otkaži/Obriši", Left = 280, Top = 555, Width = 120 };
+            _btnCancelOrDelete.Click += BtnCancelOrDelete_Click;
+
             _grid = new DataGridView
             {
                 Left = 12,
@@ -83,6 +87,7 @@ namespace AutoRent.Forms
             Controls.Add(_btnNew);
             Controls.Add(_btnReschedule);
             Controls.Add(_btnReturn);
+            Controls.Add(_btnCancelOrDelete);
             Controls.Add(_grid);
         }
 
@@ -132,6 +137,48 @@ namespace AutoRent.Forms
             var index = _grid.CurrentRow?.Index;
             if (index == null || index < 0 || index >= _currentReservations.Count) return null;
             return _currentReservations[index.Value];
+        }
+
+        private void BtnCancelOrDelete_Click(object sender, EventArgs e)
+        {
+            var reservation = GetSelectedReservation();
+            if (reservation == null)
+            {
+                MessageBox.Show("Odaberite rezervaciju koju želite otkazati/obrisati.", "Nije odabrana rezervacija",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            if (reservation.Status != ReservationStatus.Aktivna)
+            {
+                MessageBox.Show("Otkazati/obrisati je moguće samo aktivnu rezervaciju.", "Nije moguće",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            var alreadyStarted = reservation.StartDate <= DateTime.Now;
+
+            if (!alreadyStarted)
+            {
+                var confirm = MessageBox.Show(
+                    "Rezervacija još nije započela - može se trajno obrisati. Obrisati odabranu rezervaciju?",
+                    "Potvrda brisanja", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (confirm != DialogResult.Yes) return;
+
+                _reservationRepository.Delete(reservation.Id);
+            }
+            else
+            {
+                var confirm = MessageBox.Show(
+                    "Vozilo je po ovoj rezervaciji već preuzeto (najam je u tijeku) - rezervacija se ne može obrisati, " +
+                    "nego samo otkazati. Otkazati odabranu rezervaciju?",
+                    "Potvrda otkazivanja", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                if (confirm != DialogResult.Yes) return;
+
+                _reservationRepository.Cancel(reservation.Id);
+            }
+
+            Search();
         }
 
         private void BtnReschedule_Click(object sender, EventArgs e)

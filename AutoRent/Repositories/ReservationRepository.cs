@@ -125,6 +125,24 @@ namespace AutoRent.Repositories
             });
         }
 
+        public void Delete(int id)
+        {
+            Data.Db.ExecuteNonQuery(
+                "DELETE FROM Rezervacija WHERE ID_Rezervacija = @Id",
+                new Dictionary<string, object> { ["@Id"] = id });
+        }
+
+        public void Cancel(int id)
+        {
+            Data.Db.ExecuteNonQuery(
+                "UPDATE Rezervacija SET Status = @Status WHERE ID_Rezervacija = @Id",
+                new Dictionary<string, object>
+                {
+                    ["@Status"] = ReservationStatus.Otkazana.ToString(),
+                    ["@Id"] = id
+                });
+        }
+
         private static Reservation Map(DataRow row)
         {
             return new Reservation
