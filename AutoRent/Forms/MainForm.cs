@@ -15,7 +15,7 @@ namespace AutoRent.Forms
             var employee = Session.CurrentEmployee;
             Text = employee != null ? $"AutoRent - prijavljen/a: {employee} ({employee.Role})" : "AutoRent";
             Width = 420;
-            Height = 380;
+            Height = 420;
             StartPosition = FormStartPosition.CenterScreen;
 
             var top = 20;
@@ -28,7 +28,13 @@ namespace AutoRent.Forms
             var btnStatistics = AddMenuButton("Statistika korištenja vozila", ref top);
             btnStatistics.Click += (s, e) => new StatisticsForm().ShowDialog(this);
 
-            var btnLogout = new Button { Text = "Odjava", Left = 20, Top = 280, Width = 340, Height = 35 };
+            if (employee != null && employee.Role == Models.EmployeeRole.VoditeljServisa)
+            {
+                var btnReport = AddMenuButton("Godišnji financijski izvještaj", ref top);
+                btnReport.Click += (s, e) => new ReportForm().ShowDialog(this);
+            }
+
+            var btnLogout = new Button { Text = "Odjava", Left = 20, Top = 320, Width = 340, Height = 35 };
             btnLogout.Click += (s, e) =>
             {
                 Session.CurrentEmployee = null;
